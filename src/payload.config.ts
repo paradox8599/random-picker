@@ -5,11 +5,10 @@ import { buildConfig, getPayload as originalGetPayload } from 'payload';
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
 
 import { Users } from './payload/collections/users';
-import { Media } from './payload/collections/media';
 import { createS3Storage } from './payload/config/s3-storage';
 import { payloadInit } from './payload/config/init';
 import { email } from '@/payload/config/email';
-import { db } from './payload/config/database';
+import { vercelPostgresAdapter } from '@payloadcms/db-vercel-postgres';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -21,14 +20,15 @@ const payloadConfig = buildConfig({
 
   editor: lexicalEditor(),
   email,
-  db,
   sharp,
   plugins: [...createS3Storage()],
 
-  collections: [Users, Media],
+  collections: [Users],
 
   admin: {
     user: Users.slug,
+    routes: { login: '/..' },
+
     importMap: { baseDir: path.resolve(dirname) },
     autoLogin:
       process.env.NODE_ENV !== 'development'
@@ -40,6 +40,12 @@ const payloadConfig = buildConfig({
           prefillOnly: true,
         },
   },
+
+  db: vercelPostgresAdapter({
+    idType: 'uuid',
+    transactionOptions: { isolationLevel: undefined },
+    pool: { connectionString: process.env.DATABASE_URI || undefined },
+  }),
 });
 
 export async function getPayload() {

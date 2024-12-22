@@ -1,25 +1,44 @@
-import { Suspense } from 'react';
-import { getPayload } from '@/payload.config';
+import { auth, signIn, signOut } from '@/auth';
+import { Button } from '@payloadcms/ui';
 import { unstable_noStore } from 'next/cache';
 
-async function Users() {
-  unstable_noStore();
-  const payload = await getPayload();
-  const users = await payload.count({ collection: 'users' });
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  return <>{users.totalDocs}</>;
-}
-
 export default async function Page() {
+  unstable_noStore();
+  const session = await auth();
+
   return (
-    <main className="p-4">
-      <section className="shadow p-4">
-        <span className="font-bold">payload: </span>
-        <Suspense fallback="???">
-          <Users />
-        </Suspense>
-        <span> users</span>
-      </section>
+    <main className="py-2">
+      <div>
+        <pre className="whitespace-pre-wrap bg-zinc-200 rounded py-1 px-2">
+          {JSON.stringify(session?.user, null, 2)}
+        </pre>
+
+        {!session && (
+          <Button
+            onClick={async () => {
+              'use server';
+              await signIn('discord', { redirectTo: '/admin' });
+            }}
+          >
+            Login
+          </Button>
+        )}
+
+        {session && (
+          <Button
+            onClick={async () => {
+              'use server';
+              await signOut({ redirectTo: '/' });
+            }}
+          >
+            Logout
+          </Button>
+        )}
+      </div>
+
+      <div>
+        <p></p>
+      </div>
     </main>
   );
 }

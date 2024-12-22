@@ -9,6 +9,8 @@ declare global {
       /** database connection string */
       DATABASE_URI?: string;
 
+      AUTH_SECRET?: string;
+
       /** payload secret */
       PAYLOAD_SECRET?: string;
 
