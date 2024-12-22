@@ -15,19 +15,27 @@ export default function Page() {
   const [input, setInput] = React.useState<string[]>([]);
   const [seed, setSeed] = React.useState(Date.now().toString());
 
-  const [items, setItems] = React.useState<string[]>([
-    ...Array.from({ length: 10 }, (_, i) => `Item ${i + 1}`),
-  ]);
+  const [items, setItems] = React.useState<string[]>([]);
   const [shuffledItems, setShuffledItems] = React.useState<string[]>(items);
 
-  function handleAddName() {
-    const tmpItems = [
-      ...items,
-      ...input.map((name) => name.trim()).filter((name) => name.length > 0),
-    ];
-    setItems(tmpItems);
-    setShuffledItems(tmpItems);
+  function handleAddItems() {
+    const newItems = input
+      .map((it) => it.trim())
+      .filter((it) => it.length > 0)
+      .filter((it) => !items.includes(it));
+    setItems((prev) => [...prev, ...newItems]);
+    setShuffledItems((prev) => [...prev, ...newItems]);
     setInput([]);
+  }
+
+  function handleRemoveItem(item: string) {
+    setItems((prev) => prev.filter((it) => it !== item));
+    setShuffledItems((prev) => prev.filter((it) => it !== item));
+  }
+
+  function handleClear() {
+    setItems([]);
+    setShuffledItems([]);
   }
 
   function shuffleArray<T>(array: T[]): T[] {
@@ -76,7 +84,7 @@ export default function Page() {
               if (e.shiftKey || e.ctrlKey) {
                 if (e.key === 'Enter') {
                   e.preventDefault();
-                  handleAddName();
+                  handleAddItems();
                 }
               }
             }}
@@ -89,7 +97,7 @@ export default function Page() {
               className="w-full"
               size="sm"
               variant="outline"
-              onClick={handleAddName}
+              onClick={handleAddItems}
             >
               <span className="flex items-center gap-2 pr-4">
                 <Plus /> Add to List
@@ -119,6 +127,14 @@ export default function Page() {
           <div className="text-center py-4">
             <Button className="w-full h-12 uppercase" onClick={handleShuffle}>
               Shuffle
+            </Button>
+
+            <Button
+              variant="ghost"
+              className="w-full uppercase"
+              onClick={handleClear}
+            >
+              Clear
             </Button>
           </div>
         </div>
@@ -165,9 +181,7 @@ export default function Page() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => {
-                          setItems(items.filter((_, i) => i !== index));
-                        }}
+                        onClick={() => handleRemoveItem(name)}
                       >
                         <X />
                       </Button>
