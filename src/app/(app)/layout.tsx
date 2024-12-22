@@ -12,7 +12,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="tw h-screen">{children}</body>
+      <body className="tw h-dvh">{children}</body>
     </html>
   );
 }
