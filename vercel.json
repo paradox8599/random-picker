@@ -1,6 +1,6 @@
 {
   "installCommand": "bun install --fronzen-lockfile",
-  "buildCommand": "payload migrate && next build",
+  "buildCommand": "next build",
   "framework": "nextjs",
   "crons": []
 }

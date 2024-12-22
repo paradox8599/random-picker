@@ -1,8 +1,8 @@
 import './globals.scss';
 
 export const metadata = {
-  title: 'Payload',
-  description: 'Payload CMS',
+  title: 'Seeded Random Order',
+  description: 'Randomly sort a list of items with a seed',
 };
 
 export default function RootLayout({
@@ -12,7 +12,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className='tw'>{children}</body>
+      <body className="tw h-screen">{children}</body>
     </html>
   );
 }
