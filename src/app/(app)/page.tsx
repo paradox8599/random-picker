@@ -67,16 +67,13 @@ export default function Page({
   }
 
   function dataToB64() {
-    const data: Data = {
-      items,
-      seed,
-    };
-    return btoa(JSON.stringify(data));
+    const data: Data = { items, seed };
+    return btoa(encodeURIComponent(JSON.stringify(data)));
   }
 
   function dataFromB64(text: string) {
     if (text.trim().length === 0) return;
-    const data: Data = JSON.parse(atob(text.trim()));
+    const data: Data = JSON.parse(decodeURIComponent(atob(text.trim())));
     if (Array.isArray(data.items) && typeof data.items[0] === 'string') {
       setItems(data.items);
       setShuffledItems(data.items);
